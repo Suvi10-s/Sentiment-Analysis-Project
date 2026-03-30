@@ -75,13 +75,18 @@ def preprocess(text):
     return text
 vector =joblib.load("vectorizer.pkl")
 
+sentiment_map ={
+    0 :"Negative",
+    1 :"Neutral",
+    2 :"Positive"
+}
 
 @app.post("/naive",tags=["Naive Bayes"])
 def predict_nb(data:Input):
     text = preprocess(data.text)
     vectorized = vector.transform([text])
     prediction = model_nb.predict(vectorized)
-    return {"prediction::": int(prediction[0])}
+    return {"prediction": sentiment_map[int(prediction[0])]}
 
 
 @app.post("/logistic",tags=["Logistic regression"])
@@ -89,4 +94,5 @@ def predict_lo(data:Input):
     text = preprocess(data.text)
     vectorized = vector.transform([text])
     prediction =model_lo.predict(vectorized)
-    return {"prediction::": int(prediction[0])}
+    return {"prediction": sentiment_map[int(prediction[0])]}
+
